@@ -126,9 +126,11 @@ STATIC_ROOT = "/Kiwi/static/"
 
 
 AUTHENTICATION_BACKENDS = [
+    "django_python3_ldap.auth.LDAPBackend",
     "django.contrib.auth.backends.ModelBackend",
     "guardian.backends.ObjectPermissionBackend",
 ]
+
 
 
 # WARNING: Do not change this unless you know what you are doing !!!
@@ -142,7 +144,27 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
-
+LDAP_AUTH_URL = "ldap://10.10.0.10:389"
+LDAP_AUTH_USE_TLS = True
+LDAP_AUTH_SEARCH_BASE = "cn=users,dc=sigtrum,dc=com"
+LDAP_AUTH_OBJECT_CLASS  =  "inetOrgPerson"
+LDAP_AUTH_USER_FIELDS = {
+    "username": "uid",
+    "first_name": "sn",
+    "last_name": "sn",
+    "email": "mail",
+}
+LDAP_AUTH_USER_LOOKUP_FIELDS = ("username",)
+LDAP_AUTH_CLEAN_USER_DATA = "django_python3_ldap.utils.clean_user_data"
+LDAP_AUTH_SYNC_USER_RELATIONS = "django_python3_ldap.utils.sync_user_relations"
+LDAP_AUTH_FORMAT_SEARCH_FILTERS =  "django_python3_ldap.utils.format_search_filters"
+LDAP_AUTH_FORMAT_USERNAME  =  "django_python3_ldap.utils.format_username_openldap"
+LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN  =  None
+LDAP_AUTH_CONNECTION_USERNAME =None
+LDAP_AUTH_CONNECTION_PASSWORD = None
+LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = None
+LDAP_AUTH_CONNECT_TIMEOUT = None
+LDAP_AUTH_RECEIVE_TIMEOUT = None
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~ DANGER: Don't change the settings below!
@@ -211,7 +233,6 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -267,6 +288,7 @@ if os.environ.get("KIWI_DISABLE_BUGTRACKER") is None:
 
 INSTALLED_APPS = TENANT_APPS + [
     "grappelli",
+    "django_python3_ldap",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
